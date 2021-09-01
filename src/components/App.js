@@ -8,7 +8,6 @@ import Login from "./Login";
 import PrivateRoute from "./PrivateRoute";
 import ForgotPassword from "./ForgotPassword";
 import { SocketProvider } from "../contexts/SocketContext";
-import { useAuth } from "../contexts/AuthContext";
 
 function App() {
   return (
@@ -16,7 +15,7 @@ function App() {
       className="d-flex align-items-center justify-content-center"
       style={{ minHeight: "100vh" }}
     >
-      <div className="w-100" style={{ maxWidth: "400px" }}>
+      <div className="w-100">
         <Router>
           <AuthProvider>
             <SocketProvider>

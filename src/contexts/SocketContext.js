@@ -16,18 +16,10 @@ export function SocketProvider({ children }) {
     if (currentUser === null) return;
     if (currentUser === undefined) return;
 
-    console.log("Useeffect running, creating socket connection");
-    const newSocket = io("http://localhost:5000", {
+    const newSocket = io(process.env.REACT_APP_BACKEND_URL, {
       query: { id: currentUser.uid },
     });
-    // client-side
-    newSocket.on("connect", () => {
-      console.log(newSocket.id); // x8WIv7-mJelg7on_ALbx
-    });
 
-    newSocket.on("disconnect", () => {
-      console.log(newSocket.id); // undefined
-    });
     setSocket(newSocket);
 
     return () => newSocket.close();

@@ -25,7 +25,7 @@ initializeApp({
 });
 
 const auth = getAuth();
-const database = getDatabase();
+const databaseInstance = getDatabase();
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -33,7 +33,10 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState();
-  const dataDatabaseReference = ref(database, `/online/${currentUser?.uid}`);
+  const dataDatabaseReference = ref(
+    databaseInstance,
+    `/online/${currentUser?.uid}`
+  );
   const [loading, setLoading] = useState(true);
 
   function signup(email, password) {
@@ -64,11 +67,9 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log(user);
       setCurrentUser(user);
       setLoading(false);
     });
-
     return () => {
       unsubscribe();
     };
@@ -89,12 +90,9 @@ export function AuthProvider({ children }) {
     onDisconnect(dataDatabaseReference).set(false);
 
     const handleVisibilityChange = () => {
-      console.log("visibility has changed");
       if (document.visibilityState === "visible") {
-        console.log("Showing");
         set(dataDatabaseReference, true);
       } else {
-        console.log("Hidden");
         set(dataDatabaseReference, false);
       }
     };
@@ -120,6 +118,7 @@ export function AuthProvider({ children }) {
     resetPassword,
     updateEmail,
     updatePassword,
+    databaseInstance,
   };
 
   return (
