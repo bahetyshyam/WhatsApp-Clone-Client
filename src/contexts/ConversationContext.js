@@ -11,7 +11,8 @@ export function useConversation() {
 }
 
 export function ConversationProvider({ activeUser, children }) {
-  const [messages, setMessages] = useLocalStorageConversation(activeUser);
+  const [messages, setMessages, addMessageToNonActiveUserConversation] =
+    useLocalStorageConversation(activeUser);
   const { currentUser } = useAuth();
   const socket = useSocket();
 
@@ -26,8 +27,13 @@ export function ConversationProvider({ activeUser, children }) {
 
   useEffect(() => {
     if (socket == null) return;
-
-    socket.on("receive-message", (data) => addMessageToConversation(data));
+    socket.on("receive-message", (data) => {
+      if (data.senderId !== activeUser) {
+        addMessageToNonActiveUserConversation(data);
+      } else {
+        addMessageToConversation(data);
+      }
+    });
 
     return () => socket.off("receive-message");
   }, [socket, addMessageToConversation]);

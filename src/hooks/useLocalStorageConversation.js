@@ -34,5 +34,23 @@ export default function useLocalStorageConversation(activeUser) {
     localStorage.setItem(prefixedKey, JSON.stringify(storageValue));
   }, [prefixedKey, value, activeUser]);
 
-  return [value, setValue];
+  const addMessageToNonActiveUserConversation = (data) => {
+    const jsonValue = localStorage.getItem(prefixedKey);
+    if (jsonValue === null) return;
+    let valueFromLocalStorage = JSON.parse(jsonValue);
+    if (
+      valueFromLocalStorage[data.senderId] === null ||
+      valueFromLocalStorage[data.senderId] === undefined
+    ) {
+      valueFromLocalStorage[data.senderId] = data;
+    } else {
+      valueFromLocalStorage[data.senderId] = [
+        ...valueFromLocalStorage[data.senderId],
+        data,
+      ];
+    }
+    localStorage.setItem(prefixedKey, JSON.stringify(valueFromLocalStorage));
+  };
+
+  return [value, setValue, addMessageToNonActiveUserConversation];
 }
